@@ -1,0 +1,28 @@
+#!/bin/bash
+#SBATCH -A uot143
+#SBATCH --job-name="twitter"
+#SBATCH --output="twitter.distr.out"
+#SBATCH --partition=debug
+## allocate 2 nodes for the Hadoop cluster: 2 datanodes, from which 1 is also namenode
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=1
+#SBATCH --export=ALL 
+#SBATCH --time=29
+
+export HADOOP_CONF_DIR=/home/$USER/cometcluster
+module load hadoop/2.6.0
+export JAVA_HOME=/lib/jvm/java
+myhadoop-configure.sh
+start-dfs.sh
+start-yarn.sh
+
+hdfs dfs -mkdir -p /user/$USER
+hdfs dfs -put /oasis/projects/nsf/uot143/fegaras/large-twitter.csv /user/$USER/large-twitter.csv
+hadoop jar twitter.jar Twitter /user/$USER/large-twitter.csv /user/$USER/temp /user/$USER/output
+rm -rf output-distr
+mkdir output-distr
+hdfs dfs -get /user/$USER/output/part* output-distr
+
+stop-yarn.sh
+stop-dfs.sh
+myhadoop-cleanup.sh

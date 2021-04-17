@@ -1,0 +1,11 @@
+#!/bin/bash
+
+rm -rf twitter.jar classes
+
+module load hadoop/2.6.0
+
+mkdir -p classes
+javac -d classes -cp classes:`$HADOOP_HOME/bin/hadoop classpath` src/main/java/Twitter.java
+jar cf twitter.jar -C classes .
+
+echo "Compilation completed."

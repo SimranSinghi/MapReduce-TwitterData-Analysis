@@ -1,0 +1,19 @@
+#!/bin/bash
+#SBATCH -A uot143
+#SBATCH --job-name="example.local"
+#SBATCH --output="example.local.out"
+#SBATCH --partition=shared
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --export=ALL 
+#SBATCH --time=10
+
+module load hadoop/2.6.0
+
+export JAVA_HOME=/lib/jvm/java
+
+rm -rf output-simple output-join
+echo "Evaluating Simple.java:"
+hadoop --config $HOME jar example.jar Simple simple.txt output-simple
+echo "Evaluating Join.java:"
+hadoop --config $HOME jar example.jar Join e.txt d.txt output-join

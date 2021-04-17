@@ -1,0 +1,15 @@
+#!/bin/bash
+#SBATCH -A uot143
+#SBATCH --job-name="twitter.local"
+#SBATCH --output="twitter.local.out"
+#SBATCH --partition=shared
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --export=ALL 
+#SBATCH --time=10
+
+module load hadoop/2.6.0
+export JAVA_HOME=/lib/jvm/java
+
+rm -rf temp output
+hadoop --config $HOME jar twitter.jar Twitter small-twitter.csv temp output
